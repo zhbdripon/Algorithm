@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// find the longest sub-sequence of string T in string P
+// find the longest sub-sequence of string P in string S
 // Time complexity O(NM)
 int longest_subsequence(string S, string P){
 
