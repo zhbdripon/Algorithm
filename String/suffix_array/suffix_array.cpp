@@ -1,8 +1,55 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+void raddix_sort(vector<pair<pair<int,int>, int>> &v){
+    int n = v.size();
+
+    // sort the second element of the pair
+    {
+        vector<int> cnt(n);
+        for(auto p: v){
+            cnt[p.first.second]++;
+        }
+
+        vector<pair<pair<int,int>, int>> nw(n);
+        vector<int> pos(n);
+
+        pos[0] = 0;
+        for(int i = 1; i < n; i++){
+            pos[i] = pos[i-1] + cnt[i-1];
+        }
+
+        for(auto p:v){
+            int e = p.first.second;
+            nw[pos[e]++] = p;
+        }
+        v = nw;
+    }
+    // sort the first element of the pair
+    {
+        vector<int> cnt(n);
+        for(auto p: v){
+            cnt[p.first.first]++;
+        }
+
+        vector<pair<pair<int,int>, int>> nw(n);
+        vector<int> pos(n);
+
+        pos[0] = 0;
+        for(int i = 1; i < n; i++){
+            pos[i] = pos[i-1] + cnt[i-1];
+        }
+
+        for(auto p:v){
+            int e = p.first.first;
+            nw[pos[e]++] = p;
+        }
+        v = nw;
+    }
+}
+
 // suffix array
-// complexity O(nlog^2 n)
+// complexity O(nlog n)
 vector<int> build_suffix(string str){
 
     str = str + "$";
@@ -36,7 +83,7 @@ vector<int> build_suffix(string str){
             a[i] = {{c[i], c[(i+cur_pow)%len]},i};
         }
 
-        sort(a.begin(),a.end());
+        raddix_sort(a);
 
         for(int i = 0; i < len; i++)    p[i] = a[i].second;
 
