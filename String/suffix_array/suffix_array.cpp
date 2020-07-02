@@ -1,51 +1,28 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-void raddix_sort(vector<pair<pair<int,int>, int>> &v){
-    int n = v.size();
+void count_sort(vector<int> &p, vector<int> &c){
+    int n = p.size();
 
-    // sort the second element of the pair
-    {
-        vector<int> cnt(n);
-        for(auto p: v){
-            cnt[p.first.second]++;
-        }
-
-        vector<pair<pair<int,int>, int>> nw(n);
-        vector<int> pos(n);
-
-        pos[0] = 0;
-        for(int i = 1; i < n; i++){
-            pos[i] = pos[i-1] + cnt[i-1];
-        }
-
-        for(auto p:v){
-            int e = p.first.second;
-            nw[pos[e]++] = p;
-        }
-        v = nw;
+    vector<int> cnt(n);
+    for(int x: c){
+        cnt[x]++;
     }
-    // sort the first element of the pair
-    {
-        vector<int> cnt(n);
-        for(auto p: v){
-            cnt[p.first.first]++;
-        }
 
-        vector<pair<pair<int,int>, int>> nw(n);
-        vector<int> pos(n);
+    vector<int> np(n);
+    vector<int> pos(n);
 
-        pos[0] = 0;
-        for(int i = 1; i < n; i++){
-            pos[i] = pos[i-1] + cnt[i-1];
-        }
-
-        for(auto p:v){
-            int e = p.first.first;
-            nw[pos[e]++] = p;
-        }
-        v = nw;
+    pos[0] = 0;
+    for(int i = 1; i < n; i++){
+        pos[i] = pos[i-1] + cnt[i-1];
     }
+
+    for(int x:p){
+        int i = c[x];
+        np[pos[i]++] = x;
+    }
+    p = np;
+
 }
 
 // suffix array
@@ -78,26 +55,30 @@ vector<int> build_suffix(string str){
     int cur_pow = pow(2,k);
     while(cur_pow < len){
         //k -> k + 1
-        vector<pair<pair<int,int>, int>> a(len);
-        for(int i = 0; i < len; i++){
-            a[i] = {{c[i], c[(i+cur_pow)%len]},i};
-        }
 
-        raddix_sort(a);
+        for(int i = 0; i < len; i++)    p[i] = (p[i] - cur_pow + len) % len;
 
-        for(int i = 0; i < len; i++)    p[i] = a[i].second;
+        count_sort(p,c);
 
-        c[p[0]] = 0;
+        vector<int > nc(len);
+
+        nc[p[0]] = 0;
 
         for(int i = 1; i<len; i++){
-            auto cur = a[i].first;
-            auto prv = a[i-1].first;
-            if(cur == prv)  c[p[i]] = c[p[i-1]];
-            else c[p[i]] = c[p[i-1]] + 1;
+            pair<int,int > cur = { c[p[i]], c[(p[i]+cur_pow) % len] };
+            pair<int,int > prv = { c[p[i-1]], c[(p[i-1]+cur_pow) % len]};
+
+            if(cur==prv){
+                nc[p[i]] = nc[p[i-1]];
+            }else{
+                nc[p[i]] = nc[p[i-1]] + 1;
+            }
         }
+        c = nc;
         k++;
         cur_pow = pow(2,k);
     }
+
     return p;
 }
 
