@@ -27,13 +27,11 @@ void count_sort(vector<int> &p, vector<int> &c){
 
 // suffix array
 // complexity O(nlog n)
-vector<int> build_suffix(string str){
+vector<int > p,c,lcp;
 
-    str = str + "$";
-    int len = str.size();
-
-    vector<int > p(len),c(len);
-
+void build_suffix(string str,int len){
+    p.resize(len);
+    c.resize(len);
     // k = 0
     vector<pair<char,int>> v(len);
     for(int i = 0; i < len; i++)    v[i] = {str[i],i};
@@ -78,8 +76,18 @@ vector<int> build_suffix(string str){
         k++;
         cur_pow = pow(2,k);
     }
+}
 
-    return p;
+void calculate_lcp(string str, int len){
+    lcp.resize(len);
+    int k = 0;
+    for(int i = 0; i < len - 1; i++){
+        int pi = c[i];
+        int j = p[pi - 1];
+        while(str[i+k] == str[j+k]) k++;
+        lcp[pi] = k;
+        k = max(k-1,0);
+    }
 }
 
 int main(){
@@ -87,11 +95,14 @@ int main(){
     string str;
     cin>>str;
 
+    str = str + "$";
     int len = str.size();
 
-    vector<int> suffixes = build_suffix(str);
+    build_suffix(str,len);
 
-    for(int i = 0; i<suffixes.size(); i++){
-        cout<<suffixes[i]<<" "<<str.substr(suffixes[i],len-suffixes[i])<<endl;
+    calculate_lcp(str,len);
+
+    for(int i = 0; i<p.size(); i++){
+        cout<<lcp[i]<<" "<<p[i]<<" "<<str.substr(p[i],len-p[i])<<endl;
     }
 }
