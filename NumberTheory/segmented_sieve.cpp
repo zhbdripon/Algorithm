@@ -35,11 +35,11 @@ void segment_sieve(long long low,long long high, vector<long long> &primes){
     bool composite[total + 1] = {0};
 
     for(int i = 0; i < p.size(); i++){
-        long long small_mutiple = (low / p[i]) * p[i];
+        long long small_multiple = (low / p[i]) * p[i];
 
-        while(small_mutiple<=p[i] or small_mutiple<low) small_mutiple += p[i];  //if(low % p[i]) small_mutiple += p[i]; if(small_mutiple<=p[i]) small_mutiple += p[i];
+        while(small_multiple<=p[i] or small_multiple<low) small_multiple += p[i];  //if(low % p[i]) small_mutiple += p[i]; if(small_mutiple<=p[i]) small_mutiple += p[i];
 
-        for(long long j = small_mutiple; j <= high; j+=p[i]){
+        for(long long j = small_multiple; j <= high; j+=p[i]){
             composite[j - low] = 1;
         }
     }
